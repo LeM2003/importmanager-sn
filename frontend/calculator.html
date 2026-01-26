@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculateur — ImportManager SN</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="./index.html">ImportManager SN</a>
+
+    <nav class="nav">
+      <a href="./calculator.html" aria-current="page">Calculateur</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Calculateur</h1>
+      <p class="muted">Renseigne tes coûts pour estimer le coût rendu, la marge et le prix conseillé.</p>
+    </section>
+
+    <section class="grid">
+      <!-- Formulaire -->
+      <section class="card">
+        <h2>Entrées</h2>
+
+        <form class="form" action="#" method="get">
+          <div class="field">
+            <label for="currency">Devise</label>
+            <select id="currency" name="currency">
+              <option value="cny">CNY (¥)</option>
+              <option value="usd">USD ($)</option>
+              <option value="eur">EUR (€)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="unitPrice">Prix unitaire</label>
+            <input id="unitPrice" name="unitPrice" type="number" min="0" step="0.01" placeholder="Ex: 2.50" required />
+          </div>
+
+          <div class="field">
+            <label for="qty">Quantité</label>
+            <input id="qty" name="qty" type="number" min="1" step="1" placeholder="Ex: 100" required />
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="shipping">Shipping international</label>
+            <input id="shipping" name="shipping" type="number" min="0" step="0.01" placeholder="Ex: 80" />
+          </div>
+
+          <div class="field">
+            <label for="customs">Douanes / Transit</label>
+            <input id="customs" name="customs" type="number" min="0" step="0.01" placeholder="Ex: 120" />
+          </div>
+
+          <div class="field">
+            <label for="otherFees">Autres frais</label>
+            <input id="otherFees" name="otherFees" type="number" min="0" step="0.01" placeholder="Ex: 25" />
+          </div>
+
+          <hr class="sep" />
+
+          <div class="field">
+            <label for="margin">Marge souhaitée (%)</label>
+            <input id="margin" name="margin" type="number" min="0" step="0.1" placeholder="Ex: 35" />
+          </div>
+
+          <div class="actions">
+            <!-- Pas de JS pour l’instant, bouton “placeholder” -->
+            <button class="btn" type="button" disabled>Calculer (JS en semaine 2)</button>
+            <a class="btn btn-secondary" href="./index.html">Retour</a>
+          </div>
+        </form>
+      </section>
+
+      <!-- Résultats -->
+      <aside class="card">
+        <h2>Résultats</h2>
+
+        <div class="results">
+          <div class="result">
+            <span class="muted">Coût total (rendu)</span>
+            <strong>—</strong>
+          </div>
+          <div class="result">
+            <span class="muted">Coût par unité</span>
+            <strong>—</strong>
+          </div>
+          <div class="result">
+            <span class="muted">Prix de vente conseillé</span>
+            <strong>—</strong>
+          </div>
+          <div class="result">
+            <span class="muted">Profit estimé</span>
+            <strong>—</strong>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:12px">
+          Note : ces valeurs seront calculées automatiquement à la prochaine étape (JavaScript).
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <small class="muted">© 2026 — ImportManager SN</small>
+  </footer>
+</body>
+</html>
