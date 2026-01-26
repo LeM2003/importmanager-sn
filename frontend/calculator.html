@@ -40,7 +40,6 @@
             <input id="exchangeRate" name="exchangeRate" type="number" min="0" step="0.0001"
                    placeholder="Ex: 1 USD = 600 | 1 CNY = 85" />
           </div>
-
           <div class="field">
             <label for="unitPrice">Prix unitaire</label>
             <input id="unitPrice" name="unitPrice" type="number" min="0" step="0.01" placeholder="Ex: 2.50" required />
@@ -51,13 +50,33 @@
             <input id="qty" name="qty" type="number" min="1" step="1" placeholder="Ex: 100" required />
           </div>
 
-          <hr class="sep" />
-
           <div class="field">
             <label for="weightKg">Poids total du colis (kg)</label>
             <input id="weightKg" name="weightKg" type="number" min="0" step="0.01" placeholder="Ex: 10" />
           </div>
+          <div class="field">
+            <label for="chinaShipping">Livraison Chine (devise fournisseur)</label>
+            <input id="chinaShipping" name="chinaShipping" type="number" min="0" step="0.01" placeholder="Ex: 5" />
+          </div>
           
+          <div class="field">
+            <label for="bankFeeMode">Frais banque</label>
+            <select id="bankFeeMode" name="bankFeeMode">
+              <option value="pct" selected>En %</option>
+              <option value="fixed">Montant fixe (XOF)</option>
+            </select>
+          </div>
+          
+          <div class="field">
+            <label for="cardFeePct">Frais banque (%)</label>
+            <input id="cardFeePct" name="cardFeePct" type="number" min="0" step="0.1" placeholder="Ex: 3" />
+          </div>
+          
+          <div class="field">
+            <label for="cardFeeFixedXof">Frais banque fixe (XOF)</label>
+            <input id="cardFeeFixedXof" name="cardFeeFixedXof" type="number" min="0" step="1" placeholder="Ex: 1500" />
+          </div>
+          <hr class="sep" />
           <div class="field">
             <label for="ratePerKg">Tarif transitaire (XOF / kg)</label>
             <input id="ratePerKg" name="ratePerKg" type="number" min="0" step="1" placeholder="Ex: 2500" />
@@ -91,6 +110,25 @@
       <!-- Résultats -->
       <aside class="card">
         <h2>Résultats</h2>
+        
+        <div class="result">
+            <span class="muted">Total fournisseur</span>
+            <strong id="rSupplierTotal">—</strong>
+          </div>
+          
+          <div class="result">
+            <span class="muted">Total fournisseur (≈ XOF)</span>
+            <strong id="rSupplierTotalXof">—</strong>
+          </div>
+          
+          <div class="result">
+            <span class="muted">Frais banque (XOF)</span>
+            <strong id="rBankFeeXof">—</strong>
+          </div>
+          <div class="result">
+            <span class="muted">Payé au fournisseur (XOF)</span>
+            <strong id="rPaidSupplierXof">—</strong>
+          </div>
 
         <div class="results">
           <div class="result">
