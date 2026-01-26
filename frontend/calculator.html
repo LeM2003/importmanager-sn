@@ -35,6 +35,11 @@
               <option value="eur">EUR (€)</option>
             </select>
           </div>
+          <div class="field">
+            <label for="exchangeRate">Taux vers FCFA (XOF)</label>
+            <input id="exchangeRate" name="exchangeRate" type="number" min="0" step="0.0001"
+                   placeholder="Ex: 1 USD = 600 | 1 CNY = 85" />
+          </div>
 
           <div class="field">
             <label for="unitPrice">Prix unitaire</label>
@@ -49,17 +54,22 @@
           <hr class="sep" />
 
           <div class="field">
-            <label for="shipping">Shipping international</label>
-            <input id="shipping" name="shipping" type="number" min="0" step="0.01" placeholder="Ex: 80" />
+            <label for="weightKg">Poids total du colis (kg)</label>
+            <input id="weightKg" name="weightKg" type="number" min="0" step="0.01" placeholder="Ex: 10" />
+          </div>
+          
+          <div class="field">
+            <label for="ratePerKg">Tarif transitaire (XOF / kg)</label>
+            <input id="ratePerKg" name="ratePerKg" type="number" min="0" step="1" placeholder="Ex: 2500" />
           </div>
 
           <div class="field">
-            <label for="customs">Douanes / Transit</label>
+            <label for="customs">Douanes / Transit(XOF)</label>
             <input id="customs" name="customs" type="number" min="0" step="0.01" placeholder="Ex: 120" />
           </div>
 
           <div class="field">
-            <label for="otherFees">Autres frais</label>
+            <label for="otherFees">Autres frais(XOF)</label>
             <input id="otherFees" name="otherFees" type="number" min="0" step="0.01" placeholder="Ex: 25" />
           </div>
 
@@ -72,7 +82,7 @@
 
           <div class="actions">
             <!-- Pas de JS pour l’instant, bouton “placeholder” -->
-            <button class="btn" type="button" disabled>Calculer (JS en semaine 2)</button>
+            <button class="btn" type="button" id="btnCalc">Calculer (JS en semaine 2)</button>
             <a class="btn btn-secondary" href="./index.html">Retour</a>
           </div>
         </form>
@@ -85,19 +95,19 @@
         <div class="results">
           <div class="result">
             <span class="muted">Coût total (rendu)</span>
-            <strong>—</strong>
+            <strong id="rTotal">—</strong>
           </div>
           <div class="result">
             <span class="muted">Coût par unité</span>
-            <strong>—</strong>
+            <strong id="rUnit">—</strong>
           </div>
           <div class="result">
             <span class="muted">Prix de vente conseillé</span>
-            <strong>—</strong>
+            <strong id="rSale">—</strong>
           </div>
           <div class="result">
             <span class="muted">Profit estimé</span>
-            <strong>—</strong>
+            <strong id="rProfit">—</strong>
           </div>
         </div>
 
@@ -111,5 +121,6 @@
   <footer class="container footer">
     <small class="muted">© 2026 — ImportManager SN</small>
   </footer>
+  <script src="./assets/js/app.js"></script>
 </body>
 </html>
