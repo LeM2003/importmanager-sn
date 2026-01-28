@@ -35,18 +35,33 @@ function setDash() {
   });
 }
 
+function updateBankFeeUI() {
+  const modeEl = document.getElementById("bankFeeMode");
+  const pct = document.getElementById("cardFeePct");
+  const fixed = document.getElementById("cardFeeFixedXof");
+  if (!modeEl || !pct || !fixed) return;
+
+  const isPct = modeEl.value === "pct";
+  pct.disabled = !isPct;
+  fixed.disabled = isPct;
+
+  // Optionnel : ne pas vider (ça évite de perdre une valeur saisie)
+  // Si tu veux vider, décommente :
+  // if (isPct) fixed.value = "";
+  // else pct.value = "";
+}
+
 function calculate() {
   const currency = document.getElementById("currency").value;
   const symbol = currencySymbol(currency);
 
-  const unitPrice = num(document.getElementById("unitPrice").value); // devise fournisseur
+  const unitPrice = num(document.getElementById("unitPrice").value);
   const qty = int(document.getElementById("qty").value);
 
-  const exchangeRate = num(document.getElementById("exchangeRate").value); // XOF pour 1 devise
+  const exchangeRate = num(document.getElementById("exchangeRate").value);
+  const chinaShipping = num(document.getElementById("chinaShipping").value);
 
-  const chinaShipping = num(document.getElementById("chinaShipping").value); // devise fournisseur
-
-  const bankFeeMode = document.getElementById("bankFeeMode").value; // pct | fixed
+  const bankFeeMode = document.getElementById("bankFeeMode").value;
   const cardFeePct = num(document.getElementById("cardFeePct").value);
   const cardFeeFixedXof = num(document.getElementById("cardFeeFixedXof").value);
 
@@ -117,6 +132,16 @@ function bind() {
     el.addEventListener("change", calculate);
   });
 
+  // Listener spécifique pour mettre à jour l’UI quand on change le mode
+  const modeEl = document.getElementById("bankFeeMode");
+  if (modeEl) {
+    modeEl.addEventListener("change", () => {
+      updateBankFeeUI();
+      calculate();
+    });
+  }
+
+  updateBankFeeUI();
   calculate();
 }
 
