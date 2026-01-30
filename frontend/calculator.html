@@ -12,6 +12,7 @@
 
     <nav class="nav">
       <a href="./calculator.html" aria-current="page">Calculateur</a>
+      <a href="./manager.html">Dashboard</a>
     </nav>
   </header>
 
@@ -27,6 +28,12 @@
         <h2>Entrées</h2>
 
         <form class="form" action="#" method="get">
+
+          <div class="field">
+            <label for="productName">Produit</label>
+            <input id="productName" type="text" placeholder="Ex: Diffuseur" />
+          </div>
+
           <div class="field">
             <label for="currency">Devise</label>
             <select id="currency" name="currency">
@@ -101,7 +108,7 @@
 
           <div class="actions">
             <!-- Pas de JS pour l’instant, bouton “placeholder” -->
-            <button class="btn" type="button" id="btnCalc">Calculer (JS en semaine 2)</button>
+            <button class="btn btn-secondary" type="button" id="btnSaveLot">Enregistrer (lot)</button>
             <a class="btn btn-secondary" href="./index.html">Retour</a>
           </div>
         </form>
@@ -148,9 +155,8 @@
             <strong id="rProfit">—</strong>
           </div>
         </div>
-
         <p class="muted" style="margin-top:12px">
-          Note : ces valeurs seront calculées automatiquement à la prochaine étape (JavaScript).
+          Les résultats se mettent à jour automatiquement.
         </p>
       </aside>
     </section>

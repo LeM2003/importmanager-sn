@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — ImportManager SN</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="./index.html">ImportManager SN</a>
+    <nav class="nav">
+      <a href="./calculator.html">Calculateur</a>
+      <a href="./manager.html" aria-current="page">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Dashboard</h1>
+      <p class="muted">Produits (stock global) + historique des lots importés.</p>
+    </section>
+
+    <section class="card">
+      <h2>Ajouter / mettre à jour un produit</h2>
+      <div class="grid-2">
+        <div class="field">
+          <label for="pName">Nom produit</label>
+          <input id="pName" type="text" placeholder="Ex: Diffuseur" />
+        </div>
+        <div class="field">
+          <label for="pSell">Prix de vente unitaire (FCFA)</label>
+          <input id="pSell" type="number" min="0" step="1" placeholder="Ex: 1500" />
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn" id="btnUpsert">Enregistrer</button>
+        <button class="btn btn-secondary" id="btnReset">Reset</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <h2 style="margin:0;">Produits</h2>
+        <button class="btn btn-secondary" id="btnClearProducts">Tout supprimer</button>
+      </div>
+
+      <div style="overflow:auto; margin-top:12px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Stock</th>
+              <th>Prix vente (unité)</th>
+              <th>Coût stock total</th>
+              <th>CA potentiel</th>
+              <th>Bénéfice potentiel</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="productsEmpty" style="display:none; margin-top:12px;">Aucun produit.</p>
+    </section>
+
+    <section class="card">
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <h2 style="margin:0;">Lots d’import (historique)</h2>
+        <button class="btn btn-secondary" id="btnClearLots">Tout supprimer</button>
+      </div>
+
+      <div style="overflow:auto; margin-top:12px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Produit</th>
+              <th>Qté importée</th>
+              <th>Total fournisseur</th>
+              <th>Payé fournisseur (XOF)</th>
+              <th>Transitaire (XOF)</th>
+              <th>Coût rendu (XOF)</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="lotsBody"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="lotsEmpty" style="display:none; margin-top:12px;">Aucun lot.</p>
+    </section>
+
+    <section class="card">
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+        <h2 style="margin:0;">Ventes (historique)</h2>
+        <button class="btn btn-secondary" id="btnClearSales">Tout supprimer</button>
+      </div>
+
+      <div style="overflow:auto; margin-top:12px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Produit</th>
+              <th>Qté vendue</th>
+              <th>Prix unité</th>
+              <th>CA</th>
+              <th>Coût (sortie stock)</th>
+              <th>Bénéfice</th>
+            </tr>
+          </thead>
+          <tbody id="salesBody"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="salesEmpty" style="display:none; margin-top:12px;">Aucune vente.</p>
+    </section>
+  </main>
+
+  <script src="./assets/js/manager.js"></script>
+</body>
+</html>

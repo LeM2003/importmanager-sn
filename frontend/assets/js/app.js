@@ -1,25 +1,43 @@
+// ===== Storage keys (communs avec manager.js) =====
+const KEY_PRODUCTS = "ims_products";
+const KEY_LOTS = "ims_lots";
+
+// Snapshot du dernier calcul (pour enregistrer un lot)
+let lastComputed = null;
+
+// ===== Utils =====
+function load(key){
+  try { return JSON.parse(localStorage.getItem(key)) ?? []; }
+  catch { return []; }
+}
+function save(key, data){
+  localStorage.setItem(key, JSON.stringify(data));
+}
+function uuid(){
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+function normName(s){
+  return (s || "").trim().toLowerCase();
+}
+
 function num(value) {
   const n = parseFloat(value);
   return Number.isFinite(n) ? n : 0;
 }
-
 function int(value) {
   const n = parseInt(value, 10);
   return Number.isFinite(n) ? n : 0;
 }
-
 function currencySymbol(code) {
   if (code === "cny") return "¥";
   if (code === "usd") return "$";
   if (code === "eur") return "€";
   return "";
 }
-
 function formatXOF(amount) {
   const rounded = Math.round(amount);
   return `${rounded.toLocaleString("fr-FR")} FCFA`;
 }
-
 function formatSupplier(amount, symbol) {
   return `${symbol}${amount.toFixed(2)}`;
 }
@@ -44,13 +62,9 @@ function updateBankFeeUI() {
   const isPct = modeEl.value === "pct";
   pct.disabled = !isPct;
   fixed.disabled = isPct;
-
-  // Optionnel : ne pas vider (ça évite de perdre une valeur saisie)
-  // Si tu veux vider, décommente :
-  // if (isPct) fixed.value = "";
-  // else pct.value = "";
 }
 
+// ===== Core =====
 function calculate() {
   const currency = document.getElementById("currency").value;
   const symbol = currencySymbol(currency);
@@ -74,6 +88,7 @@ function calculate() {
   const marginPct = num(document.getElementById("margin").value);
 
   if (qty <= 0 || exchangeRate <= 0) {
+    lastComputed = null;
     setDash();
     return;
   }
@@ -103,6 +118,21 @@ function calculate() {
   const salePriceUnitXof = costPerUnitXof * (1 + marginPct / 100);
   const profitTotalXof = (salePriceUnitXof * qty) - totalXof;
 
+  // Snapshot pour enregistrement lot
+  const productName = (document.getElementById("productName")?.value || "").trim();
+  lastComputed = {
+    id: uuid(),
+    createdAt: new Date().toISOString(),
+    productName: productName || "—",
+    qty,
+    supplierTotalText: formatSupplier(supplierTotal, symbol),
+    supplierTotalXof,
+    bankFeeXof,
+    paidSupplierXof,
+    freightXof,
+    totalXof
+  };
+
   // Affichage
   document.getElementById("rSupplierTotal").textContent = formatSupplier(supplierTotal, symbol);
   document.getElementById("rSupplierTotalXof").textContent = formatXOF(supplierTotalXof);
@@ -117,6 +147,7 @@ function calculate() {
 
 function bind() {
   const ids = [
+    "productName",
     "currency", "unitPrice", "qty",
     "exchangeRate", "chinaShipping",
     "bankFeeMode", "cardFeePct", "cardFeeFixedXof",
@@ -132,12 +163,49 @@ function bind() {
     el.addEventListener("change", calculate);
   });
 
-  // Listener spécifique pour mettre à jour l’UI quand on change le mode
+  // Bank UI
   const modeEl = document.getElementById("bankFeeMode");
   if (modeEl) {
     modeEl.addEventListener("change", () => {
       updateBankFeeUI();
       calculate();
+    });
+  }
+
+  // Enregistrer un lot -> maj stock global produit
+  const btnSaveLot = document.getElementById("btnSaveLot");
+  if (btnSaveLot) {
+    btnSaveLot.addEventListener("click", () => {
+      const name = (document.getElementById("productName")?.value || "").trim();
+      if (!name) return alert("Renseigne le nom du produit.");
+      if (!lastComputed) return alert("Remplis d'abord le formulaire (taux + quantité).");
+
+      // 1) Sauver le lot (historique)
+      const lots = load(KEY_LOTS);
+      lots.unshift({ ...lastComputed, productName: name });
+      save(KEY_LOTS, lots);
+
+      // 2) Mettre à jour le produit (stock global + coût stock total)
+      const products = load(KEY_PRODUCTS);
+      let p = products.find(x => normName(x.name) === normName(name));
+      if (!p) {
+        p = {
+          id: uuid(),
+          name,
+          stockQty: 0,
+          sellPriceUnitXof: 0,
+          totalCostXof: 0,
+          createdAt: new Date().toISOString()
+        };
+        products.unshift(p);
+      }
+
+      p.stockQty += lastComputed.qty;
+      p.totalCostXof += lastComputed.totalXof;
+
+      save(KEY_PRODUCTS, products);
+
+      window.location.href = "./manager.html";
     });
   }
 
