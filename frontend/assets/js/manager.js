@@ -90,7 +90,7 @@ function renderProducts(){
       if (!Number.isFinite(qtySold) || qtySold <= 0) return alert("Quantité invalide.");
       if (qtySold > p.stockQty) return alert("Quantité vendue > stock.");
 
-      const defaultPrice = p.sellPriceUnitXof || 0;
+      const defaultPrice = p.sellPriceUnitXof || "";
       const priceStr = prompt("Prix de vente unitaire (FCFA) ?", String(defaultPrice));
       if (priceStr === null) return;
       const priceUnit = parseFloat(priceStr);
@@ -98,7 +98,7 @@ function renderProducts(){
 
       // Coût moyen et coût sorti du stock
       const avgCostUnit = p.stockQty > 0 ? (p.totalCostXof / p.stockQty) : 0;
-      const costSold = avgCostUnit * qtySold;
+      const costSold = Math.round(avgCostUnit * qtySold);
 
       // CA & bénéfice
       const revenue = priceUnit * qtySold;
@@ -106,7 +106,7 @@ function renderProducts(){
 
       // Mise à jour produit (stock global)
       p.stockQty -= qtySold;
-      p.totalCostXof = Math.max(0, p.totalCostXof - costSold);
+      p.totalCostXof = Math.max(0, Math.round(p.totalCostXof - costSold));
 
       save(KEY_PRODUCTS, products);
 
