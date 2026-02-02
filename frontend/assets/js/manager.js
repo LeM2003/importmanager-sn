@@ -124,6 +124,8 @@ function renderProducts(){
         clientName,
         paymentStatus,
         paidAt: isPaid ? new Date().toISOString() : null,
+        orderStatus: "active",
+        cancelledAt: null,
         qtySold,
         priceUnitXof: priceUnit,
         revenueXof: revenue,
@@ -134,6 +136,7 @@ function renderProducts(){
 
       renderProducts();
       renderSales();
+      renderSummary();
     });
   });
 }
@@ -179,7 +182,13 @@ function renderSales(){
 
   sales.forEach(s => {
     const tr = document.createElement("tr");
-    const statusText = s.paymentStatus === "paid" ? "Payé" : "En attente";
+    const status = (s.orderStatus ?? "active");
+    const pay = (s.paymentStatus ?? "pending");
+
+    let statusText = "—";
+    if (status === "cancelled") statusText = "Annulée";
+    else statusText = (pay === "paid" ? "Payé" : "En attente");
+
     tr.innerHTML = `
       <td>${fmtDate(s.createdAt)}</td>
       <td>${s.productName}</td>
@@ -191,8 +200,11 @@ function renderSales(){
       <td>${fmtXOF(s.costSoldXof)}</td>
       <td><strong>${fmtXOF(s.profitXof)}</strong></td>
       <td>
-        ${s.paymentStatus === "pending"
-          ? `<button class="btn btn-secondary" data-pay="${s.id}">Marquer payé</button>`
+        ${(status === "active" && pay === "pending")
+          ? `
+      <button class="btn btn-secondary" data-pay="${s.id}">Marquer payé</button>
+      <button class="btn btn-secondary" data-cancel="${s.id}">Annuler</button>
+    `
           : "—"}
       </td>
     `;
@@ -206,11 +218,50 @@ function renderSales(){
       const s = sales.find(x => x.id === id);
       if (!s) return;
 
+      if ((s.orderStatus ?? "active") !== "active") return;
+
       s.paymentStatus = "paid";
       s.paidAt = new Date().toISOString();
 
       save(KEY_SALES, sales);
       renderSales();
+      renderSummary();
+    });
+  });
+
+  body.querySelectorAll("button[data-cancel]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-cancel");
+      const sales = load(KEY_SALES);
+      const s = sales.find(x => x.id === id);
+      if (!s) return;
+
+      const status = (s.orderStatus ?? "active");
+      const pay = (s.paymentStatus ?? "pending");
+
+      if (status !== "active" || pay !== "pending") return;
+
+      if (!confirm("Annuler cette commande ? Le stock sera remis.")) return;
+
+      const products = load(KEY_PRODUCTS);
+      const p = products.find(x => x.id === s.productId);
+
+      if (p) {
+        p.stockQty = (p.stockQty || 0) + (s.qtySold || 0);
+        p.totalCostXof = (p.totalCostXof || 0) + (s.costSoldXof || 0);
+        save(KEY_PRODUCTS, products);
+      } else {
+        alert("Produit introuvable (supprimé). Annulation enregistrée, mais stock non restauré.");
+      }
+
+      s.orderStatus = "cancelled";
+      s.cancelledAt = new Date().toISOString();
+
+      save(KEY_SALES, sales);
+
+      renderProducts();
+      renderSales();
+      renderSummary();
     });
   });
 }
@@ -243,6 +294,27 @@ function upsertProduct(){
   renderProducts();
 }
 
+function renderSummary(){
+  const sales = load(KEY_SALES);
+
+  const active = sales.filter(s => (s.orderStatus ?? "active") === "active");
+
+  const paid = active.filter(s => (s.paymentStatus ?? "pending") === "paid");
+  const pending = active.filter(s => (s.paymentStatus ?? "pending") === "pending");
+
+  const sumPaid = paid.reduce((acc, s) => acc + (s.revenueXof || 0), 0);
+  const sumPending = pending.reduce((acc, s) => acc + (s.revenueXof || 0), 0);
+  const sumTotal = sumPaid + sumPending;
+
+  const elPaid = document.getElementById("sumPaid");
+  const elPending = document.getElementById("sumPending");
+  const elTotal = document.getElementById("sumTotal");
+
+  if (elPaid) elPaid.textContent = fmtXOF(sumPaid);
+  if (elPending) elPending.textContent = fmtXOF(sumPending);
+  if (elTotal) elTotal.textContent = fmtXOF(sumTotal);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnUpsert").addEventListener("click", upsertProduct);
   document.getElementById("btnReset").addEventListener("click", () => {
@@ -266,9 +338,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Supprimer toutes les ventes ?")) return;
     localStorage.removeItem(KEY_SALES);
     renderSales();
+    renderSummary();
   });
 
   renderProducts();
   renderLots();
   renderSales();
+  renderSummary();
 });
