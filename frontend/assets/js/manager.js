@@ -96,6 +96,10 @@ function renderProducts(){
       const priceUnit = parseFloat(priceStr);
       if (!Number.isFinite(priceUnit) || priceUnit <= 0) return alert("Prix invalide.");
 
+      const clientName = (prompt("Nom du client ?", "") || "").trim();
+      const isPaid = confirm("Le client a payé ?\nOK = Payé | Annuler = En attente");
+      const paymentStatus = isPaid ? "paid" : "pending";
+
       // Coût moyen et coût sorti du stock
       const avgCostUnit = p.stockQty > 0 ? (p.totalCostXof / p.stockQty) : 0;
       const costSold = Math.round(avgCostUnit * qtySold);
@@ -117,6 +121,9 @@ function renderProducts(){
         createdAt: new Date().toISOString(),
         productId: p.id,
         productName: p.name,
+        clientName,
+        paymentStatus,
+        paidAt: isPaid ? new Date().toISOString() : null,
         qtySold,
         priceUnitXof: priceUnit,
         revenueXof: revenue,
@@ -172,16 +179,39 @@ function renderSales(){
 
   sales.forEach(s => {
     const tr = document.createElement("tr");
+    const statusText = s.paymentStatus === "paid" ? "Payé" : "En attente";
     tr.innerHTML = `
       <td>${fmtDate(s.createdAt)}</td>
       <td>${s.productName}</td>
+      <td>${s.clientName || "—"}</td>
+      <td>${statusText}</td>
       <td>${s.qtySold}</td>
       <td>${fmtXOF(s.priceUnitXof)}</td>
       <td><strong>${fmtXOF(s.revenueXof)}</strong></td>
       <td>${fmtXOF(s.costSoldXof)}</td>
       <td><strong>${fmtXOF(s.profitXof)}</strong></td>
+      <td>
+        ${s.paymentStatus === "pending"
+          ? `<button class="btn btn-secondary" data-pay="${s.id}">Marquer payé</button>`
+          : "—"}
+      </td>
     `;
     body.appendChild(tr);
+  });
+
+  body.querySelectorAll("button[data-pay]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-pay");
+      const sales = load(KEY_SALES);
+      const s = sales.find(x => x.id === id);
+      if (!s) return;
+
+      s.paymentStatus = "paid";
+      s.paidAt = new Date().toISOString();
+
+      save(KEY_SALES, sales);
+      renderSales();
+    });
   });
 }
 
