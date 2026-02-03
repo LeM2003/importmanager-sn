@@ -1,3 +1,5 @@
+console.log("manager.js version: client+paid enabled");
+
 const KEY_PRODUCTS = "ims_products";
 const KEY_LOTS = "ims_lots";
 const KEY_SALES = "ims_sales";
