@@ -4,6 +4,10 @@ const KEY_PRODUCTS = "ims_products";
 const KEY_LOTS = "ims_lots";
 const KEY_SALES = "ims_sales";
 
+const modalSale = document.getElementById("modalSale");
+const formSale = document.getElementById("formSale");
+const btnCancelSale = document.getElementById("btnCancelSale");
+
 function load(key){
   try { return JSON.parse(localStorage.getItem(key)) ?? []; }
   catch { return []; }
@@ -74,6 +78,7 @@ function renderProducts(){
     });
   });
 
+  // Ouverture de la modale Vendre
   body.querySelectorAll("button[data-sell]").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-sell");
@@ -86,59 +91,17 @@ function renderProducts(){
         return;
       }
 
-      const qtyStr = prompt(`Quantité vendue ? (stock: ${p.stockQty})`, "1");
-      if (qtyStr === null) return;
-      const qtySold = parseInt(qtyStr, 10);
-      if (!Number.isFinite(qtySold) || qtySold <= 0) return alert("Quantité invalide.");
-      if (qtySold > p.stockQty) return alert("Quantité vendue > stock.");
+      // Pré-remplir le formulaire
+      document.getElementById("saleProductId").value = p.id;
+      document.getElementById("saleProductName").value = p.name;
+      document.getElementById("saleQty").value = 1;
+      document.getElementById("saleQty").max = p.stockQty; // Limite max = stock actuel
+      document.getElementById("salePrice").value = p.sellPriceUnitXof || "";
+      document.getElementById("saleClient").value = "";
+      document.getElementById("saleStatus").value = "paid"; // Par défaut
 
-      const defaultPrice = p.sellPriceUnitXof || "";
-      const priceStr = prompt("Prix de vente unitaire (FCFA) ?", String(defaultPrice));
-      if (priceStr === null) return;
-      const priceUnit = parseFloat(priceStr);
-      if (!Number.isFinite(priceUnit) || priceUnit <= 0) return alert("Prix invalide.");
-
-      const clientName = (prompt("Nom du client ?", "") || "").trim();
-      const isPaid = confirm("Le client a payé ?\nOK = Payé | Annuler = En attente");
-      const paymentStatus = isPaid ? "paid" : "pending";
-
-      // Coût moyen et coût sorti du stock
-      const avgCostUnit = p.stockQty > 0 ? (p.totalCostXof / p.stockQty) : 0;
-      const costSold = Math.round(avgCostUnit * qtySold);
-
-      // CA & bénéfice
-      const revenue = priceUnit * qtySold;
-      const profit = revenue - costSold;
-
-      // Mise à jour produit (stock global)
-      p.stockQty -= qtySold;
-      p.totalCostXof = Math.max(0, Math.round(p.totalCostXof - costSold));
-
-      save(KEY_PRODUCTS, products);
-
-      // Sauver vente (historique)
-      const sales = load(KEY_SALES);
-      sales.unshift({
-        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        createdAt: new Date().toISOString(),
-        productId: p.id,
-        productName: p.name,
-        clientName,
-        paymentStatus,
-        paidAt: isPaid ? new Date().toISOString() : null,
-        orderStatus: "active",
-        cancelledAt: null,
-        qtySold,
-        priceUnitXof: priceUnit,
-        revenueXof: revenue,
-        costSoldXof: costSold,
-        profitXof: profit
-      });
-      save(KEY_SALES, sales);
-
-      renderProducts();
-      renderSales();
-      renderSummary();
+      // Afficher la modale
+      modalSale.classList.remove("hidden");
     });
   });
 }
@@ -315,6 +278,85 @@ function renderSummary(){
   if (elPaid) elPaid.textContent = fmtXOF(sumPaid);
   if (elPending) elPending.textContent = fmtXOF(sumPending);
   if (elTotal) elTotal.textContent = fmtXOF(sumTotal);
+}
+
+// Gestion de la soumission du formulaire Vendre
+if (formSale) {
+  formSale.addEventListener("submit", (e) => {
+    e.preventDefault(); // Empêche le rechargement de la page
+
+    const productId = document.getElementById("saleProductId").value;
+    const qty = parseInt(document.getElementById("saleQty").value, 10);
+    const priceUnit = parseFloat(document.getElementById("salePrice").value);
+    const clientName = document.getElementById("saleClient").value.trim();
+    const status = document.getElementById("saleStatus").value; // paid ou pending
+
+    if (!productId || qty <= 0 || priceUnit <= 0) {
+      alert("Veuillez remplir correctement tous les champs.");
+      return;
+    }
+
+    const products = load(KEY_PRODUCTS);
+    const p = products.find(x => x.id === productId);
+
+    if (!p) return alert("Produit introuvable.");
+    if (qty > p.stockQty) return alert("Stock insuffisant !");
+
+    // Calculs
+    const avgCostUnit = p.stockQty > 0 ? (p.totalCostXof / p.stockQty) : 0;
+    const costSold = Math.round(avgCostUnit * qty);
+    const revenue = priceUnit * qty;
+    const profit = revenue - costSold;
+
+    // Mise à jour Stock
+    p.stockQty -= qty;
+    p.totalCostXof = Math.max(0, Math.round(p.totalCostXof - costSold));
+    save(KEY_PRODUCTS, products);
+
+    // Enregistrement Vente
+    const sales = load(KEY_SALES);
+    sales.unshift({
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      createdAt: new Date().toISOString(),
+      productId: p.id,
+      productName: p.name,
+      clientName: clientName,
+      paymentStatus: status,
+      paidAt: status === "paid" ? new Date().toISOString() : null,
+      orderStatus: "active",
+      cancelledAt: null,
+      qtySold: qty,
+      priceUnitXof: priceUnit,
+      revenueXof: revenue,
+      costSoldXof: costSold,
+      profitXof: profit
+    });
+    save(KEY_SALES, sales);
+
+    // Rafraîchir l'affichage
+    renderProducts();
+    renderSales();
+    renderSummary();
+
+    // Fermer la modale
+    modalSale.classList.add("hidden");
+  });
+}
+
+// Bouton Annuler de la modale
+if (btnCancelSale) {
+  btnCancelSale.addEventListener("click", () => {
+    modalSale.classList.add("hidden");
+  });
+}
+
+// Fermer en cliquant en dehors (optionnel mais sympa)
+if (modalSale) {
+  modalSale.addEventListener("click", (e) => {
+    if (e.target === modalSale) {
+      modalSale.classList.add("hidden");
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
