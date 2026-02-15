@@ -140,6 +140,52 @@
     </section>
   </main>
 
+  <!-- MODALE DE VENTE -->
+  <div id="modalSale" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>Nouvelle Vente</h3>
+
+      <form id="formSale">
+        <!-- ID du produit caché -->
+        <input type="hidden" id="saleProductId">
+
+        <div class="field">
+          <label>Produit</label>
+          <input type="text" id="saleProductName" disabled style="background: rgba(255,255,255,0.05);">
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="saleQty">Quantité</label>
+            <input type="number" id="saleQty" min="1" required placeholder="Ex: 5">
+          </div>
+          <div class="field">
+            <label for="salePrice">Prix Unitaire (FCFA)</label>
+            <input type="number" id="salePrice" min="0" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="saleClient">Client</label>
+          <input type="text" id="saleClient" placeholder="Nom du client">
+        </div>
+
+        <div class="field">
+          <label for="saleStatus">Statut Paiement</label>
+          <select id="saleStatus">
+            <option value="paid">Payé (Encaissement)</option>
+            <option value="pending">En attente (Créance)</option>
+          </select>
+        </div>
+
+        <div class="actions" style="margin-top: 20px; justify-content: flex-end; display: flex; gap: 10px;">
+          <button type="button" class="btn btn-secondary" id="btnCancelSale">Annuler</button>
+          <button type="submit" class="btn">Valider la vente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="./assets/js/manager.js"></script>
 </body>
 </html>
