@@ -3,6 +3,123 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ImportManager SN - L'ERP des Importateurs</title>
+  <link rel="stylesheet" href="./assets/css/style.css" />
+  <style>
+    /* Styles spécifiques pour la Home */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.2s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+    }
+    .feature-card h3 {
+      color: var(--primary);
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(79, 124, 255, 0.2);
+      color: var(--primary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="./index.html">ImportManager SN</a>
+
+    <nav class="nav">
+      <a href="./index.html" aria-current="page">Accueil</a>
+      <a href="./calculator.html">Calculateur</a>
+      <a href="./manager.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="text-align: center; padding: 60px 0;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 16px;">
+        Maîtrisez vos Imports Alibaba → Sénégal 🇸🇳
+      </h1>
+      <p class="muted" style="max-width: 600px; margin: 0 auto 32px auto; font-size: 1.1rem;">
+        Ne laissez plus les frais cachés grignoter vos marges.
+        Calculez votre coût rendu précis, gérez votre stock et suivez vos créances clients en temps réel.
+      </p>
+
+      <div class="actions" style="justify-content: center;">
+        <a class="btn" href="./calculator.html" style="padding: 12px 24px; font-size: 1rem;">Lancer une Simulation</a>
+        <a class="btn btn-secondary" href="./manager.html" style="padding: 12px 24px; font-size: 1rem;">Accéder au Dashboard</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="text-align: center;">Une Architecture Complète (V3)</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="badge">V1 - COÛTS</span>
+          <h3>🧮 Calculateur de Précision</h3>
+          <p class="muted">Intègre devises, frais bancaires (% ou fixe) et transitaire (kg/CBM) pour un coût rendu au franc près.</p>
+        </div>
+        <div class="feature-card">
+          <span class="badge">V2 - STOCK</span>
+          <h3>📦 Gestion d'Inventaire</h3>
+          <p class="muted">Transformez vos estimations en lots réels. Suivi du coût moyen pondéré et du stock global par produit.</p>
+        </div>
+        <div class="feature-card">
+          <span class="badge">V3 - VENTES</span>
+          <h3>💰 Caisse & Créances</h3>
+          <p class="muted">Nouvelle interface de vente modale. Suivez qui a payé et qui vous doit de l'argent (Encaissements vs En attente).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Workflow Simplifié</h2>
+      <ol class="muted" style="line-height: 1.8; margin-left: 20px;">
+        <li><strong>Calculez :</strong> Estimez la rentabilité avant même d'acheter sur Alibaba.</li>
+        <li><strong>Enregistrez :</strong> Validez l'importation pour alimenter votre stock.</li>
+        <li><strong>Vendez :</strong> Utilisez le Dashboard pour enregistrer les sorties (Interface V3).</li>
+        <li><strong>Pilotez :</strong> Visualisez instantanément votre CA encaissé et vos créances.</li>
+      </ol>
+    </section>
+
+    <section class="card" style="text-align: center;">
+      <h2>Open Source & Transparent</h2>
+      <p class="muted">
+        Développé avec rigueur (Vanilla JS, Clean Architecture). Données stockées localement sur votre appareil.
+      </p>
+      <div style="margin-top: 16px;">
+        <a href="https://github.com/LeM2003/importmanager-sn" target="_blank" class="btn btn-secondary">Voir le Code sur GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container footer" style="text-align: center;">
+    <small class="muted">© 2026 — ImportManager SN. Conçu par Mouhamadou Diouf.</small>
+  </footer>
+</body>
+</html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ImportManager SN</title>
   <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
