@@ -211,24 +211,6 @@ npx http-server
 
 ---
 
-## 📸 Captures d'Écran
-
-### 🧮 Calculateur de Coût Rendu
-
-![Calculateur](docs/screenshots/Calculateurpng)
-
-*Interface de calcul avec support multi-devises et estimation automatique du profit*
-
----
-
-### 📊 Dashboard de Gestion
-
-![Dashboard](docs/screenshots/Dashboard.png)
-
-*Gestion centralisée du stock, des ventes et suivi des créances*
-
----
-
 ## 🎯 Cas d'Usage Réels
 
 ### Pour Importateurs
