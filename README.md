@@ -215,7 +215,7 @@ npx http-server
 
 ### 🧮 Calculateur de Coût Rendu
 
-![Calculateur](docs/images/calculator.png)
+![Calculateur](docs/screenshots/Calculateurpng)
 
 *Interface de calcul avec support multi-devises et estimation automatique du profit*
 
@@ -223,7 +223,7 @@ npx http-server
 
 ### 📊 Dashboard de Gestion
 
-![Dashboard](docs/images/dashboard.png)
+![Dashboard](docs/screenshots/Dashboard.png)
 
 *Gestion centralisée du stock, des ventes et suivi des créances*
 
